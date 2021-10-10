@@ -2,8 +2,10 @@ package com.company;
 
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class CLI {
@@ -27,6 +29,7 @@ public class CLI {
 
             switch (option) {
                 case 1:
+                    retrieve();
                     break;
                 case 2:
                     addfiles();
@@ -35,8 +38,10 @@ public class CLI {
                     deleteFile();
                     break;
                 case 4:
+                    search();
                     break;
                 case 5:
+                    view();
                     break;
                 case 6:
                     exit = true;
@@ -46,6 +51,22 @@ public class CLI {
             }
         }while(exit == false);
     }
+
+    void retrieve(){
+        File folder = new File(FILEFOLDER);
+        List<String> strList = new ArrayList<>();
+
+        for (final File fileEntry : folder.listFiles()) {
+            String fileEntryName = fileEntry.getName();
+            strList.add(fileEntryName);
+        }
+        Collections.sort(strList);
+
+        for(String str: strList){
+            System.out.println(str);
+        }
+    }
+
 
     void addfiles(){
         Scanner keyboard = new Scanner(System.in);
@@ -69,7 +90,7 @@ public class CLI {
 
     void deleteFile(){
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("Name path and file you want to add to the app:");
+        System.out.println("Name file which you want to delete:");
         String fileName = keyboard.nextLine();
         File file = new File(FILEFOLDER + fileName);
 
@@ -83,6 +104,44 @@ public class CLI {
             }
         }else{
             System.out.println("File " + fileName + " doesn't exist");
+        }
+    }
+    void search(){
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Name file which search:");
+        String fileName = keyboard.nextLine();
+        File file = new File(FILEFOLDER + fileName);
+
+        if(file.exists()){
+            System.out.println("File " + fileName + " exists");
+        }else{
+            System.out.println("File " + fileName + " doesn't exist");
+        }
+    }
+
+    void view(){
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Name file which you want to view:");
+        String fileName = keyboard.nextLine();
+        File file = new File(FILEFOLDER + fileName);
+
+        if(file.exists()){
+            BufferedReader reader;
+            try{
+                reader = new BufferedReader(new FileReader(file));
+                String line =reader.readLine();
+                while(line != null){
+                    System.out.println(line);
+                    line = reader.readLine();
+                }
+                reader.close();
+            }catch(FileNotFoundException ex){
+                System.out.println("File not found " + ex);
+            }catch (IOException ex) {
+                System.out.println("IOException: " + ex);
+            }
+        }else{
+            System.out.println("File doesn't exist");
         }
     }
 }
